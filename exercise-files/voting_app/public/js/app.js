@@ -1,17 +1,33 @@
 
-class ProductList extends React.Component {
 
-  handleProductUpVote(productId) {
-    console.log(productId + ' was upvoted.');
+class ProductList extends React.Component{
+  
+  state = {
+      products: [],
+  };
+
+  componentDidMount(){
+    this.setState({products: Seed.products})
   }
 
-  render() {
-    const products = Seed.products.sort((a, b) => (
-      b.votes - a.votes
-    ));
+  handleProductUpVote = (productId) => {
+    const nextProducts = this.state.products.map((product) => {
+      if (product.id === productId){
+        return Object.assign({}, product, {
+          votes: product.votes + 1,
+        });
+      } else {
+        return product;
+      }
+    });
+    this.setState({products: nextProducts})
+  }
+  render(){
+    const products = this.state.products.sort((a,b) => (b.votes-a.votes));
+
     const productComponents = products.map((product) => (
       <Product
-        key={'product-' + product.id}
+        key = {'product-'+product.id}
         id={product.id}
         title={product.title}
         description={product.description}
@@ -22,7 +38,7 @@ class ProductList extends React.Component {
         onVote={this.handleProductUpVote}
       />
     ));
-    return (
+    return(
       <div className='ui unstackable items'>
         {productComponents}
       </div>
@@ -30,20 +46,23 @@ class ProductList extends React.Component {
   }
 }
 
-class Product extends React.Component {
-  handleUpVote() {
-    this.props.onVote(this.props.id);
-  }
-  render() {
-    return (
-      <div className='item'>
+
+class Product extends React.Component{
+
+  handleUpVote = () => (
+    this.props.onVote(this.props.id)
+  );
+
+  render(){
+    return(
+      <div className ='item'>
         <div className='image'>
-          <img src={this.props.productImageUrl} />
+          <img src={this.props.productImageUrl}/>
         </div>
         <div className='middle aligned content'>
           <div className='header'>
             <a onClick={this.handleUpVote}>
-              <i className='large caret up icon' />
+              <i className='large caret up icon'/>
             </a>
             {this.props.votes}
           </div>
@@ -57,10 +76,7 @@ class Product extends React.Component {
           </div>
           <div className='extra'>
             <span>Submitted by:</span>
-            <img
-              className='ui avatar image'
-              src={this.props.submitterAvatarUrl}
-            />
+            <img className='ui avatar image' src={this.props.submitterAvatarUrl}/>
           </div>
         </div>
       </div>
@@ -68,7 +84,8 @@ class Product extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <ProductList />,
-  document.getElementById('content')
-);
+
+
+
+
+ReactDOM.render(<ProductList/>, document.getElementById('content'))
